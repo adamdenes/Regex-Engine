@@ -14,7 +14,6 @@ func main() {
 		log.Fatalf("error: %v", err)
 	}
 	rgx, in := parseInput(input)
-	//fmt.Println(matchingCharacters(rgx, in))
 	fmt.Println(diffLengthCheck(rgx, in))
 }
 
@@ -54,15 +53,15 @@ func isMatching(r, i []byte) bool {
 	return match
 }
 
-func matchingCharacters(rgx, in []byte) bool {
-	if len(rgx) > 0 && len(in) <= 0 {
+func matchingCharacters(r, i []byte) bool {
+	if len(r) > 0 && len(i) <= 0 {
 		return false
 	}
-	if len(rgx) > 0 && len(in) > 0 {
-		if !isMatching(rgx[:1], in[:1]) {
+	if len(r) > 0 && len(i) > 0 {
+		if !isMatching(r[:1], i[:1]) {
 			return false
 		}
-		return matchingCharacters(rgx[1:], in[1:])
+		return matchingCharacters(r[1:], i[1:])
 	}
 	return true
 }
