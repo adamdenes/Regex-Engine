@@ -79,3 +79,25 @@ Input: 'appl.|apple'     Output: true
 Input: '.....|apple'     Output: true
 Input: 'peach|apple'     Output: false
 ```
+## Stage 3/6: Working with strings of different length
+
+Repeatedly invoke a function and check if there is a match of characters. If there isn't,
+another section of the string should be passed.
+
+### Example
+```
+Input: ‘tion|Section’     Output: false
+Input: ‘tion|ection’      Output: false
+Input: ‘tion|ction’       Output: false
+Input: ‘tion|tion’        Output: true
+```
+## Objectives
+
+The improved regex engine should do the following:
+
+    - A new function is created as an entry point;
+    - It should repeatedly invoke the function that compares two equal length patterns;
+    - If that function returns true, the new function should also return true;
+    - If that function returns false, the input string should be passed to the matching
+    function with an incremented starting position, and the regex should be passed unmodified;
+    - The process goes on until the entire input string has been consumed.
