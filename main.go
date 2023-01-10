@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 )
 
 func main() {
@@ -15,7 +14,7 @@ func main() {
 		log.Fatalf("error: %v", err)
 	}
 	rgx, in := parseInput(input)
-	fmt.Println(isMatching(rgx, in))
+	fmt.Println(matchingCharacters(rgx, in))
 }
 
 func getInput() ([]byte, error) {
@@ -32,8 +31,6 @@ func parseInput(b []byte) ([]byte, []byte) {
 	nb := bytes.Split(trimmed, []byte("|"))
 	regex := nb[0]
 	input := nb[1]
-	//fmt.Printf("nb[0]=%v, nb[1]=%v\n", nb[0], nb[1])
-	//fmt.Printf("str nb[0]=%v, str nb[1]=%v\n", string(nb[0]), string(nb[1]))
 	return regex, input
 }
 
@@ -46,7 +43,7 @@ func isMatching(r, i []byte) bool {
 	case regex == "" && input == "",
 		regex == "",
 		regex == ".",
-		strings.Compare(regex, input) == 0:
+		regex == input:
 		match = true
 	case input == "":
 		match = false
@@ -54,4 +51,17 @@ func isMatching(r, i []byte) bool {
 		match = false
 	}
 	return match
+}
+
+func matchingCharacters(rgx, in []byte) bool {
+	if len(rgx) > 0 && len(in) <= 0 {
+		return false
+	}
+	if len(rgx) > 0 && len(in) > 0 {
+		if !isMatching(rgx[0:1], in[:1]) {
+			return false
+		}
+		return matchingCharacters(rgx[1:], in[1:])
+	}
+	return true
 }
