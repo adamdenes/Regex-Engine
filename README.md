@@ -1,6 +1,6 @@
 # Regex-Engine
 
-## Single character strings
+## Stage 1/6: Single character strings
 
 In this first stage, create a function that can compare a single character regex
 to a single character input string.
@@ -34,7 +34,7 @@ Input:  '|'      Output: true
 Input: 'a|'      Output: false
 ```
 
-## Matching two equal length strings
+## Stage 2/6: Matching two equal length strings
 A single character is not a lot, so let's extend our new regex engine to handle
 regex-string pairs of equal length. Don't forget about supporting the wildcard 
 symbol! It is still not the most realistic way to use a regex engine, but we are
@@ -101,3 +101,30 @@ The improved regex engine should do the following:
     - If that function returns false, the input string should be passed to the matching
     function with an incremented starting position, and the regex should be passed unmodified;
     - The process goes on until the entire input string has been consumed.
+
+## Stage 4/6: Implementing the operators ^ and $
+
+Your task is to add some metacharacters to the already existing regex engine.
+
+At this stage, you should add the following special cases:
+
+    - ^ can occur at the beginning of the regex, and it means that the 
+    following regex should be matched only at the beginning of the input string.
+    - $ can occur at the end of the regex, and it means that the preceding regex
+    should be matched only at the end of the input string.
+
+### Example
+```
+Input:    '^app|apple'           Output: true
+Input:     'le$|apple'           Output: true
+Input:      '^a|apple'           Output: true
+Input:      '.$|apple'           Output: true
+Input:  'apple$|tasty apple'     Output: true
+Input:  '^apple|apple pie'       Output: true
+Input: '^apple$|apple'           Output: true
+Input: '^apple$|tasty apple'     Output: false
+Input: '^apple$|apple pie'       Output: false
+Input:    'app$|apple'           Output: false
+Input:     '^le|apple'           Output: falsa
+```
+

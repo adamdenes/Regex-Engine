@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -37,7 +38,6 @@ func parseInput(b []byte) ([]byte, []byte) {
 func isMatching(r, i []byte) bool {
 	regex := string(r)
 	input := string(i)
-
 	var match bool
 	switch {
 	case regex == "" && input == "",
@@ -54,9 +54,15 @@ func isMatching(r, i []byte) bool {
 }
 
 func matchingCharacters(r, i []byte) bool {
+	//fmt.Printf("MC(): Input:\t'%s|%s'\n", r, i)
 	if len(r) > 0 && len(i) <= 0 {
+		if len(r) == 1 && string(r[len(r)-1:]) == "$" {
+			//fmt.Printf("MC(): ends with '$'\n")
+			return true
+		}
 		return false
 	}
+
 	if len(r) > 0 && len(i) > 0 {
 		if !isMatching(r[:1], i[:1]) {
 			return false
@@ -67,7 +73,14 @@ func matchingCharacters(r, i []byte) bool {
 }
 
 func diffLengthCheck(r, i []byte) bool {
-	//fmt.Printf("Input: '%s|%s'\tOutput: %t\n", r, i, matchingCharacters(r, i))
+	if len(r) == 0 {
+		return true
+	}
+	fmt.Printf("Input:\t'%s|%s'\tOutput: %t\n", r, i, matchingCharacters(r, i))
+	if strings.HasPrefix(string(r[:1][0]), "^") {
+		//fmt.Printf("\tstarts with '^'\n")
+		return matchingCharacters(r[1:], i)
+	}
 	if matchingCharacters(r, i) {
 		return true
 	}
