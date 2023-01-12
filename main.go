@@ -132,34 +132,67 @@ func useMetaChar(b []byte) ([]byte, int) {
 				continue
 			}
 			idx = bytes.IndexByte(b, c)
-			//fmt.Printf("UMC: char=%v idx=%v\n", string(c), idx)
 			ch = append(ch, c)
 		}
 	}
 	return ch, idx
 }
 
-// `?` matches the preceding character zero times or once
-func matchZeroOrOnce(idx int, r, i *[]byte) {
+func omit(idx int, r, i *[]byte) bool {
 	var first, rest []byte
-	// omit the char
-	//fmt.Printf("MZO(): len(i)=%d len(r)=%d\n", len(*i), len(*r))
+	// omit the meta char
+	fmt.Printf("O(): len(i)=%d len(r)=%d\n", len(*i), len(*r))
 	if (len(*r)-idx)-(len(*i)-idx) == 2 {
 		first = (*r)[:idx-1]
 		rest = (*r)[idx+1:]
-		//fmt.Printf("MC(): first=%s rest=%s\n", first, rest)
+		fmt.Printf("O(): first=%s rest=%s\n", first, rest)
 		*r = append(first, rest...)
-		return
+		return true
 	}
-	//fmt.Printf("MZO(): i[idx]=%s r[idx+1]=%s\n", string((*i)[idx-1]), string((*r)[idx-1]))
-	first = (*r)[:idx]
-	rest = (*r)[idx+1:]
-	//fmt.Printf("MC(): first=%s rest=%s\n", first, rest)
-	*r = append(first, rest...)
+	return false
+}
+
+// `?` matches the preceding character zero times or once
+func matchZeroOrOnce(idx int, r, i *[]byte) {
+	if !omit(idx, r, i) && (*i)[idx-1] == (*r)[idx-1] ||
+		string((*r)[idx-1]) == "." {
+		first := (*r)[:idx]
+		rest := (*r)[idx+1:]
+		*r = append(first, rest...)
+	}
 }
 
 // `*` matches the preceding character zero or more times
-func matchZeroOrMore(idx int, r, i *[]byte) {}
+func matchZeroOrMore(idx int, r, i *[]byte) {
+	// something like '.*|aaa' would go out of length otherwise
+	if len(*r) == 2 {
+		first := (*r)[:idx]
+		rest := (*r)[idx+1:]
+		*r = append(first, rest...)
+		return
+	}
+
+	if !omit(idx, r, i) && (*i)[idx-1] == (*r)[idx-1] ||
+		string((*r)[idx-1]) == "." {
+
+		*r = (*r)[idx-1:]
+		*i = (*i)[idx-1:]
+	}
+}
 
 // `+` matches the preceding character once or more times
-func matchOnceOrMore(idx int, r, i *[]byte) {}
+func matchOnceOrMore(idx int, r, i *[]byte) {
+	count := strings.Count(string(*i), string((*r)[idx-1]))
+	// preceding char occurs once
+	if count == 1 && (*i)[idx-1] == (*r)[idx-1] ||
+		string((*r)[idx-1]) == "." {
+		first := (*r)[:idx]
+		rest := (*r)[idx+1:]
+		*r = append(first, rest...)
+	}
+
+	if count > 1 {
+		*r = (*r)[idx-1:]
+		*i = (*i)[idx-1:]
+	}
+}
