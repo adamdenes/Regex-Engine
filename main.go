@@ -52,18 +52,17 @@ func isMatching(r, i []byte) bool {
 }
 
 func matchingCharacters(r, i []byte) bool {
-	fmt.Printf("MC(): Input:\t'%s|%s'\n", r, i)
-
 	if len(r) > 0 && len(i) <= 0 {
 		if len(r) == 1 && string(r[len(r)-1:]) == "$" {
-			//fmt.Printf("MC(): ends with '$'\n")
 			return true
 		}
 		return false
 	}
 
 	if len(r) > 0 && len(i) > 0 {
-
+		if string(r[:1]) == "\\" {
+			r = r[1:]
+		}
 		if !isMatching(r, i) {
 			return false
 		}
@@ -90,7 +89,6 @@ func diffLengthCheck(r, i []byte) bool {
 	}
 
 	if strings.HasPrefix(string(r[:1][0]), "^") {
-		//fmt.Printf("\tstarts with '^'\n")
 		return matchingCharacters(r[1:], i)
 	}
 	if matchingCharacters(r, i) {
@@ -100,22 +98,6 @@ func diffLengthCheck(r, i []byte) bool {
 		return false
 	}
 	return diffLengthCheck(r, i[1:])
-}
-
-func peek(r []byte) ([]byte, []byte, []byte) {
-	var orig, meta, rest []byte
-	for idx := range r {
-		//fmt.Printf("P(): \tr[:idx]=%s\n", r[:idx])
-		switch string(r[idx : idx+1]) {
-		case "?", "*", "+":
-			//fmt.Printf("P(): \tr[:idx]=%s\n", r[:idx])
-			orig = r[:idx]
-			meta = r[idx : idx+1]
-			rest = r[idx+1:]
-			//fmt.Printf("P(): \tr[:idx]=%s r[idx:idx+1]=%s r[idx+1:]=%s\n", orig, meta, rest)
-		}
-	}
-	return orig, meta, rest
 }
 
 // provides the index of the meta character
@@ -141,11 +123,9 @@ func useMetaChar(b []byte) ([]byte, int) {
 func omit(idx int, r, i *[]byte) bool {
 	var first, rest []byte
 	// omit the meta char
-	fmt.Printf("O(): len(i)=%d len(r)=%d\n", len(*i), len(*r))
 	if (len(*r)-idx)-(len(*i)-idx) == 2 {
 		first = (*r)[:idx-1]
 		rest = (*r)[idx+1:]
-		fmt.Printf("O(): first=%s rest=%s\n", first, rest)
 		*r = append(first, rest...)
 		return true
 	}
@@ -154,6 +134,10 @@ func omit(idx int, r, i *[]byte) bool {
 
 // `?` matches the preceding character zero times or once
 func matchZeroOrOnce(idx int, r, i *[]byte) {
+	if string((*r)[idx-1]) == "\\" {
+		return
+	}
+
 	if !omit(idx, r, i) && (*i)[idx-1] == (*r)[idx-1] ||
 		string((*r)[idx-1]) == "." {
 		first := (*r)[:idx]
@@ -164,6 +148,9 @@ func matchZeroOrOnce(idx int, r, i *[]byte) {
 
 // `*` matches the preceding character zero or more times
 func matchZeroOrMore(idx int, r, i *[]byte) {
+	if string((*r)[idx-1]) == "\\" {
+		return
+	}
 	// something like '.*|aaa' would go out of length otherwise
 	if len(*r) == 2 {
 		first := (*r)[:idx]
