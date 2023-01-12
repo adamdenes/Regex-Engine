@@ -95,12 +95,12 @@ Input: ‘tion|tion’        Output: true
 
 The improved regex engine should do the following:
 
-    - A new function is created as an entry point;
-    - It should repeatedly invoke the function that compares two equal length patterns;
-    - If that function returns true, the new function should also return true;
-    - If that function returns false, the input string should be passed to the matching
+    * A new function is created as an entry point;
+    * It should repeatedly invoke the function that compares two equal length patterns;
+    * If that function returns true, the new function should also return true;
+    * If that function returns false, the input string should be passed to the matching
     function with an incremented starting position, and the regex should be passed unmodified;
-    - The process goes on until the entire input string has been consumed.
+    * The process goes on until the entire input string has been consumed.
 
 ## Stage 4/6: Implementing the operators ^ and $
 
@@ -108,9 +108,9 @@ Your task is to add some metacharacters to the already existing regex engine.
 
 At this stage, you should add the following special cases:
 
-    - ^ can occur at the beginning of the regex, and it means that the 
+   * `^` can occur at the beginning of the regex, and it means that the 
     following regex should be matched only at the beginning of the input string.
-    - $ can occur at the end of the regex, and it means that the preceding regex
+   * `$` can occur at the end of the regex, and it means that the preceding regex
     should be matched only at the end of the input string.
 
 ### Example
@@ -131,27 +131,27 @@ Input:     '^le|apple'           Output: falsa
 ## Stage 5/6: Controlling repetition 
 Add the following metacharacters to your engine:
 
-   - ? matches the preceding character zero times or once;
-   - * matches the preceding character zero or more times;
-   - + matches the preceding character once or more times.
+   * `?` matches the preceding character zero times or once;
+   * `*` matches the preceding character zero or more times;
+   * `+` matches the preceding character once or more times.
 
 ## Objectives
 
 In the case of the operator ?, there are two possible scenarios:
 
-    -The preceding character occurs zero times, so basically it is skipped. This means that only the part of the regex, if present, after the metacharacter ? is passed to the recursive function along with the unmodified input string.
-    -The preceding character occurs once. This means that if the character preceding ? matches the first character of the input string, the part of the regex after ? is passed to the recursive function along with the part of the input string without the character that is already matched.
+   * The preceding character occurs zero times, so basically it is skipped. This means that only the part of the regex, if present, after the metacharacter ? is passed to the recursive function along with the unmodified input string.
+   * The preceding character occurs once. This means that if the character preceding ? matches the first character of the input string, the part of the regex after ? is passed to the recursive function along with the part of the input string without the character that is already matched.
 
 In the case of the operator *, there are the following scenarios:
 
-    -The preceding character occurs zero times (just like with ?). The condition from the previous case can be reused.
-    -The preceding character occurs one or more times. Like in the case of ?, the character preceding * should match the first character of the input string. Since we don’t know how many times it is going to be repeated, the regex should be passed to the recursive function without any modification, and the first character of the input string should be chopped off. In this case, since the metacharacter * is not removed, the second case is repeated until the preceding character can be matched. After that, the first case applies and the function comes out of the recursion.
+   * The preceding character occurs zero times (just like with ?). The condition from the previous case can be reused.
+   * The preceding character occurs one or more times. Like in the case of ?, the character preceding * should match the first character of the input string. Since we don’t know how many times it is going to be repeated, the regex should be passed to the recursive function without any modification, and the first character of the input string should be chopped off. In this case, since the metacharacter * is not removed, the second case is repeated until the preceding character can be matched. After that, the first case applies and the function comes out of the recursion.
 
 Finally, here is what can happen with the operator +:
 
-    -The preceding character occurs once. This case is the same as the second case with the operator ?.
-    -The preceding character occurs more than once. This case is basically the same as the second case with the operator *.
-    -If there are character(s) after the operator, you need to pass to the recursive function a modified regex and a modified string.
+   * The preceding character occurs once. This case is the same as the second case with the operator ?.
+   * The preceding character occurs more than once. This case is basically the same as the second case with the operator *.
+   * If there are character(s) after the operator, you need to pass to the recursive function a modified regex and a modified string.
 
 ### Example
 ```
