@@ -167,3 +167,20 @@ Input:  'col.*r|colr'        Output: true
 Input:  'col.*r|collar'      Output: true
 Input: 'col.*r$|colors'      Output: false
 ```
+## Stage 6/6: Escaping
+
+The character that follows a backward slash should be interpreted as a 
+literal. This way, a simple string comparison is enough to determine a
+match. You should also take care of skipping the escape sequence before
+continuing the recursion. This can be done using the same logic that we
+used to handle the repetition operators ?, *, and +.
+
+### Example
+```
+Input:      '\.$|end.'              Output: true
+Input:     '3\+3|3+3=6'             Output: true
+Input:       '\?|Is this working?'  Output: true
+Input:       '\\|\'                 Output: true
+Input: 'colou\?r|color'             Output: false
+Input: 'colou\?r|colour'            Output: false
+```
